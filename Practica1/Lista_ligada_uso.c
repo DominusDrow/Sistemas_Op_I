@@ -1,3 +1,11 @@
+/**
+ * PRACTICA 1: Listas ligadas circulares y archivos
+ * 
+ * INTEGRANTES:
+ * Vásquez López Alfredo Omar    201957903
+ * 
+*/
+
 #include <stdio.h>
 #include "Lista_ligada_circular.h"
 

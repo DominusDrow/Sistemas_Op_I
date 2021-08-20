@@ -1,20 +1,36 @@
+/**
+ * PRACTICA 1: Listas ligadas circulares y archivos
+ * 
+ * INTEGRANTES:
+ * Vásquez López Alfredo Omar    201957903
+ * 
+*/
+
 #include <stdio.h> 
 #include <stdlib.h>
 
-struct nodo {
+//Estructura del nodo 
+struct Nodo {
     int info;
-    struct nodo *sig;
-    struct nodo *ant;
+    struct Nodo *sig;
+    struct Nodo *ant;
 };
 
-struct nodo *raiz=NULL;
+//Renombrar un puntero a la estructura nodo
+typedef struct Nodo* nodo;
 
+//Creacion de la lista ligada circular
+nodo raiz=NULL;
 
+/*
+ * Funcion que libera la memoria utilizada en la ejecucion
+ * del programa una vez que este halla finalizado.
+ */
 void liberar()
 {
    if (raiz != NULL) {
-        struct nodo *reco = raiz->sig;
-        struct nodo *bor;
+        nodo reco = raiz->sig;
+        nodo bor;
         while (reco != raiz)
         {
             bor = reco;
@@ -27,17 +43,16 @@ void liberar()
 
 int vacia()
 {
-    if (raiz == NULL)
-        return 1;
-    else
-        return 0;
+    if (raiz == NULL)   return 1;
+    else    return 0;
+        
 }
 
 
 void insertarPrimero(int x)
 {
-    struct nodo *nuevo;
-    nuevo=malloc(sizeof(struct nodo));
+    nodo nuevo;
+    nuevo=malloc(sizeof(struct Nodo));
     nuevo->info = x;
     if (raiz == NULL)
     {
@@ -47,7 +62,7 @@ void insertarPrimero(int x)
     }
     else
     {
-        struct nodo *ultimo = raiz->ant;
+        nodo ultimo = raiz->ant;
         nuevo->sig = raiz;
         nuevo->ant = ultimo;
         raiz->ant = nuevo;
@@ -58,8 +73,8 @@ void insertarPrimero(int x)
 
 void insertarUltimo(int x)
 {
-    struct nodo *nuevo;
-    nuevo=malloc(sizeof(struct nodo));
+    nodo nuevo;
+    nuevo=malloc(sizeof(struct Nodo));
     nuevo->info = x;
     if (raiz == NULL)
     {
@@ -69,7 +84,7 @@ void insertarUltimo(int x)
     }
     else
     {
-        struct nodo *ultimo = raiz->ant;
+        nodo ultimo = raiz->ant;
         nuevo->sig = raiz;
         nuevo->ant = ultimo;
         raiz->ant = nuevo;
@@ -80,7 +95,7 @@ void insertarUltimo(int x)
 void imprimir()
 {
     if (!vacia()) {
-        struct nodo *reco = raiz;
+        nodo reco = raiz;
         do {
             printf("%i ",reco->info);
             reco = reco->sig;
@@ -94,7 +109,7 @@ int cantidad()
     int cant = 0;
     if (!vacia())
     {
-        struct nodo *reco = raiz;
+        nodo reco = raiz;
         do {
             cant++;
             reco = reco->sig;
@@ -116,8 +131,8 @@ void borrar(int pos)
             }
             else
             {
-                struct nodo *bor = raiz;
-                struct nodo *ultimo = raiz->ant;
+                nodo bor = raiz;
+                nodo ultimo = raiz->ant;
                 raiz = raiz->sig;
                 ultimo->sig = raiz;
                 raiz->ant = ultimo;
@@ -125,12 +140,12 @@ void borrar(int pos)
             }
         }
         else {
-            struct nodo *reco = raiz;
+            nodo reco = raiz;
             int f;
             for (f = 1; f <= pos - 1; f++)
                 reco = reco->sig;
-            struct nodo *bor = reco;
-            struct nodo *anterior = reco->ant;
+            nodo bor = reco;
+            nodo anterior = reco->ant;
             reco = reco->sig;
             anterior->sig = reco;
             reco->ant = anterior;
