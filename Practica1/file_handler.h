@@ -11,7 +11,7 @@ void readFile (const char* filename)
 	fscanf (file, "%d", &i);
 	while (!feof (file))
 	{
-		insertar (i, tamanio ());	
+		insertar (i, tamanio () + 1);	
 		fscanf (file, "%d", &i);
 	}
 
