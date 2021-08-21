@@ -123,8 +123,7 @@ void eliminar (int i){
 
 /**
  * Funcion que busca un elemento dentro de la lista ligada
- * circular, si lo encuentra devuelve su posicion, en caso 
- * contrario devuelve 0
+ * circular, si lo encuentra o no se muestra un mensaje
  * 
  * Parametros:
  * int elemento a buscar
