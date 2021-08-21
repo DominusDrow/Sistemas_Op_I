@@ -11,7 +11,49 @@
 
 #include <stdio.h>
 #include "Lista_ligada_circular.h"
-#include "file_handler.h"
+
+#include <stdio.h>
+
+void readFile(const char* filename);
+void writeFile(const char*filename, nodo root);
+
+void readFile (const char* filename)
+{
+	FILE* file = fopen (filename, "r");
+	int i = 0;
+
+	fscanf (file, "%d", &i);
+	while (!feof (file))
+	{
+		insertar (tamanio () + 1, i);	
+		fscanf (file, "%d", &i);
+	}
+
+	fclose (file);
+}
+
+void writeFile (const char* filename, nodo root)
+{
+	FILE* file = fopen (filename, "w");
+	nodo aux = root;
+	int i;
+
+	if (file != NULL)
+	{
+		while (aux != NULL && aux->sig != root)
+		{
+			i = aux->num;
+			fprintf (file, "%d\n", i);
+			aux = aux->sig;
+		}
+		if (aux != NULL)
+		{
+			i = aux->num;
+			fprintf (file, "%d\n", i);
+		}
+	}
+	fclose (file);
+}
 
 int menu()
 {
@@ -21,9 +63,7 @@ int menu()
     printf("[2] Insertar en posición i\n");
     printf("[3] Eliminar un dato\n");
     printf("[4] Buscar un dato\n");
-    printf("[5] Mostrar lista\n");
-    printf("[6] Guardar en archivo\n");
-    printf("[7] Salir\n");
+    printf("[6] Salir\n");
     scanf("%d", &opc);
     return opc;
 }
@@ -31,16 +71,13 @@ int menu()
 int main()
 {
     int opc=menu(), dato, posicion;
-    char* filename;
 
-    while(opc!=7)
+    while(opc!=6)
     {
         switch (opc)
         {
         case 1:
-	    printf ("\nIngrese el nombre del archivo y extensión: ");
-	    scanf ("%s", filename);
-	    readFile (filename);
+            readFile("test.txt");
             break;
         case 2:
             printf("\nDame un numero a insertar en la lista ");
@@ -59,18 +96,14 @@ int main()
             scanf("%d", &dato);
             buscar(dato);
             break;
-        case 5:
-            printf("\nLista");
-            imprimir();
-            break;
-	case 6:
-	    printf ("\nIngrese el nombre del archivo y extensión: "); 
-	    scanf("%s", filename);
-	    writeFile (filename, raiz);
-	    break;
         default:
             printf("\nError: Opcion no valida ");
             break;
+        }
+        if(!vacia())
+        {
+            printf("\t\t\nLista");
+            imprimir();
         }
         opc=menu();
     }
