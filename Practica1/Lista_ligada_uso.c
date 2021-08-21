@@ -21,9 +21,8 @@ int menu()
     printf("[2] Insertar en posición i\n");
     printf("[3] Eliminar un dato\n");
     printf("[4] Buscar un dato\n");
-    printf("[5] Mostrar lista\n");
-    printf("[6] Guardar en archivo\n");
-    printf("[7] Salir\n");
+    printf("[5] Guardar en archivo\n");
+    printf("[6] Salir\n");
     scanf("%d", &opc);
     return opc;
 }
@@ -33,7 +32,7 @@ int main()
     int opc=menu(), dato, posicion;
     char* filename;
 
-    while(opc!=7)
+    while(opc!=6)
     {
         switch (opc)
         {
@@ -59,22 +58,25 @@ int main()
             scanf("%d", &dato);
             buscar(dato);
             break;
-        case 5:
-            printf("\nLista");
-            imprimir();
-            break;
-	case 6:
-	    printf ("\nIngrese el nombre del archivo y extensión: "); 
-	    scanf("%s", filename);
-	    writeFile (filename, raiz);
-	    break;
+	    case 5:
+	        printf ("\nIngrese el nombre del archivo y extensión: "); 
+	        scanf("%s", filename);
+	        writeFile (filename, raiz);
+	        break;
         default:
             printf("\nError: Opcion no valida ");
             break;
         }
+        if(!vacia())
+        {
+            printf("\nLista");
+            imprimir();
+        }
         opc=menu();
+        
     }
     
     return 0;
 }
+
 
