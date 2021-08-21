@@ -129,20 +129,22 @@ void eliminar (int i){
  * Parametros:
  * int elemento a buscar
  */
-int buscar(int num){
+void buscar(int num){
     nodo aux = raiz;
-    int j, i = 0;
+    int encontrado=0, j, i = 0;
 
     if(!vacia())
         for (j = 1; j <= tamanio(); j++){
             if(aux->num == num){
+                encontrado=1;
                 i=j;
                 break;
             }   
             else aux = aux->sig;
         }
-               
-    return i;
+    if(encontrado)
+        printf("Numero en contrado en la posicioin %i\n", i);    
+    else    printf("Numero no encontrado\n");       
 }
 
 /**
