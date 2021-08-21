@@ -11,7 +11,7 @@ void readFile (const char* filename)
 	fscanf (file, "%d", &i);
 	while (!feof (file))
 	{
-		insertar (i, tamanio () + 1);	
+		insertar (tamanio () + 1, i);	
 		fscanf (file, "%d", &i);
 	}
 
@@ -28,13 +28,13 @@ void writeFile (const char* filename, nodo root)
 	{
 		while (aux != NULL && aux->sig != root)
 		{
-			i = aux->info;
+			i = aux->num;
 			fprintf (file, "%d\n", i);
 			aux = aux->sig;
 		}
 		if (aux != NULL)
 		{
-			i = aux->info;
+			i = aux->num;
 			fprintf (file, "%d\n", i);
 		}
 	}

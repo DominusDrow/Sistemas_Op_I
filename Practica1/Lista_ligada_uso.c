@@ -11,6 +11,7 @@
 
 #include <stdio.h>
 #include "Lista_ligada_circular.h"
+#include "file_handler.h"
 
 int menu()
 {
@@ -21,7 +22,8 @@ int menu()
     printf("[3] Eliminar un dato\n");
     printf("[4] Buscar un dato\n");
     printf("[5] Mostrar lista\n");
-    printf("[6] Salir\n");
+    printf("[6] Guardar en archivo\n");
+    printf("[7] Salir\n");
     scanf("%d", &opc);
     return opc;
 }
@@ -29,13 +31,16 @@ int menu()
 int main()
 {
     int opc=menu(), dato, posicion;
+    char* filename;
 
-    while(opc!=6)
+    while(opc!=7)
     {
         switch (opc)
         {
         case 1:
-
+	    printf ("\nIngrese el nombre del archivo y extensión: ");
+	    scanf ("%s", filename);
+	    readFile (filename);
             break;
         case 2:
             printf("\nDame un numero a insertar en la lista ");
@@ -58,6 +63,11 @@ int main()
             printf("\nLista");
             imprimir();
             break;
+	case 6:
+	    printf ("\nIngrese el nombre del archivo y extensión: "); 
+	    scanf("%s", filename);
+	    writeFile (filename, raiz);
+	    break;
         default:
             printf("\nError: Opcion no valida ");
             break;
