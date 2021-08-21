@@ -91,7 +91,7 @@ void insertar(int i,int num){
  * Parametros:
  * int posicion de la lista ligada
  */
-void elminimar(int i){
+void eliminar (int i){
     int j;
     if (i <= tamanio()){
         if (i == 1){
