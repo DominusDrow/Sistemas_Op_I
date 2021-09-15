@@ -7,6 +7,8 @@
  * 
 */
 
+/***SIMULADOR DE PLANIFICACIÓN A LARGO PLAZO***/
+
 #include <stdio.h> 
 #include <stdlib.h>
 
@@ -19,22 +21,21 @@ struct Node{
 //Renombrar un puntero a la estructura del Nodo
 typedef struct Node* node;
 
-//Creacion de la lista ligada 
+//Creacion de la lista ligada (SIMULARIA LA PCB DE PROCESOS Y LA COLA DE LISTOS)
 node root=NULL;
 
 /**
- * Funcion que recibe una lista ligada y un nodo el cual 
- * lo ordena dentro de ella sugun su prioridad en forma 
- * acendente.
+ * Funcion que recibe  un nodo el cual lo ordena dentro de
+ * la lista ligada sugun su prioridad en forma acendente.
  * 
  * Parametros:
- * node lista ligada, nuevo nodo
+ * node nuevo nodo
  */
 void push(node created){
     if(root==NULL)
         root = created;
-    if(created->prority < root->prority){
-        created->next = root->next;
+    else if(created->prority < root->prority){
+        created->next = root;
         root = created;
     }
     else{
@@ -46,17 +47,15 @@ void push(node created){
         created->next = aux->next;
         aux->next = created;
     }
-   
 }
 
 /**
- * Funcion que recibe una lista ligada y crea un nuevo nodo
- * dentro de ella, en donde los primeros tres parametros 
- * (identificar, prioridad y tiempo de ejecucion)
- * se igualan a los valores pasados por parametro.
+ * Funcion que crea un nuevo nodo y lo añade a la lista
+ * en donde los primeros tres parametros (identificar, 
+ * prioridad y tiempo de ejecucion) se igualan a los 
+ * valores pasados por parametro.
  * 
  * Parametros:
- * node lista ligada
  * int identificador, prioridad, tiempo de ejecucion
  */
 void Create(int id,int prority, int tExe){
@@ -71,9 +70,7 @@ void Create(int id,int prority, int tExe){
 /**
  * Funcion que ddevuelve el nodo raiz que es el que
  * contiene el menor valor numerico en su campo "prioridad"
- * 
- * Parametros:
- * node lista ligada
+ * no recibe parametros.
  */
 node pop( ){
     node aux = root;
@@ -85,10 +82,7 @@ node pop( ){
 
 /**
  * Funcion que devuelve el numero de elementos que
- * tiene la lista ligada
- * 
- * Parametros:
- * node lista ligada
+ * tiene la lista ligada, no recibe parametros.
  */
 int size(){
     int s = 0;
@@ -104,7 +98,7 @@ int size(){
 
 /**
  * Funcion que libera la memoria utilizada por la lista ligada 
- * circular en la ejecucion del programa una vez que este halla 
+ * creada en la ejecucion del programa una vez que este halla 
  * finalizado.
  */
 void freeSpace(){
@@ -116,16 +110,5 @@ void freeSpace(){
             free(delate);
         }
         free(root);
-    }
-}
-
-void imprimir(){
-    if (root!=NULL){
-        node aux = root;
-        do {
-            printf("=> %i ",aux->id);
-            aux = aux->next;
-        } while (aux != NULL);
-        printf("=>\n");
     }
 }

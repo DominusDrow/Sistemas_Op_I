@@ -16,25 +16,26 @@ void generateRandomFile(){
 
 }
 
-
+/**
+ * Funcion que lee n siguientes lineas del archivo "randomFile.txt"
+ * cada vez que es invocada hasta que llegue al final del archivo 
+ * 
+ * Parametros:
+ * int* linea en que se quedo leyendo
+ */
 void lotReader(int* line){
     int n = rand () % 15 + 1;
-    int total, i=0, flag, id, prority, tExe;
+    int i=0, id, prority, tExe;
 
     FILE* file = fopen("randomFile.txt","rb");
     fseek(file,*line,SEEK_SET);
-    printf("aaaa");
-    while (i<n && feof(file)==0){
+
+    while (i++ < n && feof(file) == 0){
         fscanf(file,"%d %d %d", &id, &prority, &tExe);
         Create(id,prority,tExe);
-        i++;
-        printf("%d ",feof(file));
     }
     
-    
-    *line = ftell(file);
-    flag = (feof!=0) ?0 :1;
+    *line = (feof(file)!=0) ?-1 :ftell(file);
     fclose(file);
-
 }
 
