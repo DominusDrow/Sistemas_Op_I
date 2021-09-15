@@ -22,7 +22,7 @@ void generateRandomFile(){
     FILE* file = fopen("randomFile.txt","wb");
 
     for ( i = 0; i < processes; i++){
-        id = rand () % 9000 + 1000;
+        id = i;
         prority = rand () % 33 + 0;  
         tExe = rand () % 200 + 1;
         if(i == processes-1)

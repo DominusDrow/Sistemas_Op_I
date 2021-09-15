@@ -11,10 +11,13 @@
 
 #include <stdio.h> 
 #include <stdlib.h>
+#include <time.h>
+
+#define QUANTUM 15
 
 //Estructura del nodo 
 struct Node{    
-    int id,prority,tExe,tArrival,tWait,tEnding,quantum;
+    int id,prority,tExe,tArrival,tWait,tEnding,quantum, remainingTime;
     struct Node* next;
 };
 
@@ -64,6 +67,9 @@ void Create(int id,int prority, int tExe){
     created->prority = prority;
     created->tExe = tExe;
     created->next = NULL;
+    created->remainingTime = tExe;
+    created->quantum = QUANTUM; 
+    created->tArrival = time (NULL);
     push(created);
 }
 
