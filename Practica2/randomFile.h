@@ -15,7 +15,7 @@
  * Funcion que crea el archivo "randomFile.txt" con datos 
  * aleatorios, no recibe parametros.
  */
-void generateRandomFile(){
+int generateRandomFile(){
     int processes  = rand () % 499 + 2;
     int i, id, prority, tExe;
 
@@ -32,6 +32,8 @@ void generateRandomFile(){
     }
 
     fclose(file);
+
+    return processes;
 }
 
 /**
@@ -43,14 +45,14 @@ void generateRandomFile(){
  */
 void lotReader(int* line){
     int n = rand () % 50 + 1;
-    int i=0, id, prority, tExe;
+    int i=0, id, priority, tExe;
 
     FILE* file = fopen("randomFile.txt","rb");
     fseek(file,*line,SEEK_SET);
 
     while (i++ < n && feof(file) == 0){
-        fscanf(file,"%d %d %d", &id, &prority, &tExe);
-        Create(id,prority,tExe);
+        fscanf(file,"%d %d %d", &id, &priority, &tExe);
+        create (id, priority, tExe);
     }
     
     *line = (feof(file)!=0) ?-1 :ftell(file);

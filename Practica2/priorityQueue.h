@@ -9,48 +9,104 @@
 
 /***SIMULADOR DE PLANIFICACIÓN A LARGO PLAZO***/
 
-#include <stdio.h> 
 #include <stdlib.h>
+#include <time.h>
+
+#define QUANTUM 10
 
 //Estructura del nodo 
-struct Node{    
-    int id,prority,tExe,tArrival,tWait,tEnding,quantum;
-    struct Node* next;
+struct node 
+{
+    int id;
+    int priority;
+    int tExe;
+    int tArrival;
+    int tWait;
+    int tEnding;    
+    int remainingTime;
+    int remainingQuantum;
+    struct node* next;
 };
 
-//Renombrar un puntero a la estructura del Nodo
-typedef struct Node* node;
+struct node* head = NULL;
+struct node* current = NULL;
 
-//Creacion de la lista ligada (SIMULARIA LA PCB DE PROCESOS Y LA COLA DE LISTOS)
-node root=NULL;
+/**
+ * Funcion que devuelve el numero de elementos que
+ * tiene la lista ligada, no recibe parametros.
+ */
+int lenght ()
+{
+    int lenght = 0;
+
+    // if list is empty
+    if (head == NULL)
+    {
+        return 0;
+    }
+
+    current = head->next;
+    
+    while (current != head)
+    {
+        lenght++;
+        current = current->next;
+    }
+
+    return lenght;
+}
 
 /**
  * Funcion que recibe  un nodo el cual lo ordena dentro de
  * la lista ligada sugun su prioridad en forma acendente.
- * 
- * Parametros:
- * node nuevo nodo
  */
-void push(node created){
-    if(root==NULL)
-        root = created;
-    else if(created->prority < root->prority){
-        created->next = root;
-        root = created;
+void push (struct node* process)
+{
+    struct node* last = head;
+    if (head == NULL)
+    {
+        head = process;
+        process->next = head;
     }
-    else{
-        node aux = root;
+    else if (process->priority < head->priority)
+    {
+        process->next = head;
+        head = process;
+    }
+    else
+    {
+        struct node* current = head;
 
-        while (created->prority > aux->prority && aux->next!=NULL)
-            aux = aux->next;
+        while (process->priority > current->priority && current->next != head)
+        {
+            current = current->next;
+        }
         
-        created->next = aux->next;
-        aux->next = created;
+        process->next = current->next;
+        current->next = process;
+    }
+}
+
+void pushLast (struct node* process) {
+    current = head;
+
+    if (head == NULL)
+    {
+        head = process;
+    }
+    else
+    {
+        while (current->next != head)
+        {
+            current = current->next;
+        }
+        current->next = process;
+        process->next = head;
     }
 }
 
 /**
- * Funcion que crea un nuevo nodo y lo añade a la lista
+ * Funcion que crea un nuevo nodo y lo retorna
  * en donde los primeros tres parametros (identificar, 
  * prioridad y tiempo de ejecucion) se igualan a los 
  * valores pasados por parametro.
@@ -58,57 +114,65 @@ void push(node created){
  * Parametros:
  * int identificador, prioridad, tiempo de ejecucion
  */
-void Create(int id,int prority, int tExe){
-    node created = malloc(sizeof(struct Node));
+void create(int id,int priority, int tExe){
+    struct node* created = malloc(sizeof(struct node));
     created->id = id;
-    created->prority = prority;
+    created->priority = priority;
     created->tExe = tExe;
     created->next = NULL;
-    push(created);
+    created->remainingTime = tExe;
+    created->remainingQuantum = QUANTUM;
+    created->tArrival = time (NULL);
+    push (created);
 }
 
 /**
- * Funcion que ddevuelve el nodo raiz que es el que
+ * Funcion que devuelve el nodo raiz que es el que
  * contiene el menor valor numerico en su campo "prioridad"
  * no recibe parametros.
  */
-node pop( ){
-    node aux = root;
-    if(root!=NULL)
-        root = root->next;
-
-    return aux;
+struct node* pop()
+{
+    return head;
 }
 
-/**
- * Funcion que devuelve el numero de elementos que
- * tiene la lista ligada, no recibe parametros.
- */
-int size(){
-    int s = 0;
-    if (root!=NULL){
-        node aux = root;
-        do {
-            s++;
-            aux = aux->next;
-        } while (aux != NULL);
-    }
-    return s;
+//delete first item
+struct node * deleteFirst() {
+
+   //save reference to first link
+   struct node *tempLink = head;
+	
+   if(head->next == head) {  
+      head = NULL;
+      return tempLink;
+   }     
+
+   //mark next to first link as first 
+   head = head->next;
+	
+   //return the deleted link
+   return tempLink;
 }
+
 
 /**
  * Funcion que libera la memoria utilizada por la lista ligada 
  * creada en la ejecucion del programa una vez que este halla 
  * finalizado.
  */
-void freeSpace(){
-   if (root != NULL){
-        node delate,aux = root->next;
-        while (aux != root){
-            delate = aux;
-            aux = aux->next;
-            free(delate);
+void freeSpace()
+{
+   if (head != NULL)
+   {
+        struct node *delete;
+        current = head->next;
+
+        while (current != head)
+        {
+            delete = current;
+            current = current->next;
+            free (delete);
         }
-        free(root);
+        free (head);
     }
 }
