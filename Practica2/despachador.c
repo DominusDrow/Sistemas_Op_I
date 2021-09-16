@@ -34,6 +34,7 @@ int main() {
 		process->remainingQuantum = process->remainingQuantum - 1;
 		process->remainingTime = process->remainingTime - 1;
 		printf ("Ahora ejecutando el proceso: %d\n", process->id);
+		printf ("Prioridad: %d\n", process->priority);
 		printf ("Tiempo de ejecucion restante: %d\n", process->remainingTime);
 		printf ("Tiempo de quantum restante: %d\n", process->remainingQuantum);
 

@@ -32,7 +32,6 @@ int generateRandomFile(){
     }
 
     fclose(file);
-
     return processes;
 }
 

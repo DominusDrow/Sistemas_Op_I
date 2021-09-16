@@ -70,8 +70,18 @@ void push (struct node* process)
     }
     else if (process->priority < head->priority)
     {
-        process->next = head;
-        head = process;
+        if (head->next = head)
+        {
+            current = head;
+            process->next = head;
+            head = process;
+            current->next = head;
+        }
+        else
+        {
+            process->next = head;
+            head = process;
+        }
     }
     else
     {
@@ -147,6 +157,12 @@ struct node * deleteFirst() {
       return tempLink;
    }     
 
+    current = head;
+    while (current->next != head)
+    {
+        current = current->next;
+    }
+    current->next = head->next;
    //mark next to first link as first 
    head = head->next;
 	
