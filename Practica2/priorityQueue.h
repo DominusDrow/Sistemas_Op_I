@@ -4,7 +4,7 @@
  * 
  * INTEGRANTES:
  * Vásquez López Alfredo Omar    201957903
- * 
+ * Pazos Quezada Azarel		 201905195
 */
 
 /***SIMULADOR DE PLANIFICACIÓN A LARGO PLAZO***/
@@ -32,37 +32,11 @@ struct node* head = NULL;
 struct node* current = NULL;
 
 /**
- * Funcion que devuelve el numero de elementos que
- * tiene la lista ligada, no recibe parametros.
- */
-int lenght ()
-{
-    int lenght = 0;
-
-    // if list is empty
-    if (head == NULL)
-    {
-        return 0;
-    }
-
-    current = head->next;
-    
-    while (current != head)
-    {
-        lenght++;
-        current = current->next;
-    }
-
-    return lenght;
-}
-
-/**
  * Funcion que recibe  un nodo el cual lo ordena dentro de
  * la lista ligada sugun su prioridad en forma acendente.
  */
 void push (struct node* process)
 {
-    struct node* last = head;
     if (head == NULL)
     {
         head = process;
