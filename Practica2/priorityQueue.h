@@ -3,8 +3,11 @@
  * Round Robin con prioridades preventivo
  * 
  * INTEGRANTES:
- * Vásquez López Alfredo Omar    201957903
- * Pazos Quezada Azarel		 201905195
+ * Vásquez López Alfredo Omar    	201957903
+ * Pazos Quezada Azarel          	201905195
+ * Eusebio Aquino José Ángel 	 	201969852
+ * Javier Olivares Héctor 		201938693
+ * García Espinoza Alejandro Tonatiuh 	201910235
 */
 
 /***SIMULADOR DE PLANIFICACIÓN A LARGO PLAZO***/
