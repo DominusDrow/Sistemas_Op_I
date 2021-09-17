@@ -1,3 +1,12 @@
+/**
+ * PRACTICA 2: Simulador de algoritmo de planificación 
+ * Round Robin con prioridades preventivo
+ * 
+ * INTEGRANTES:
+ * Vásquez López Alfredo Omar    201957903
+ * Pazos Quezada Azarel          201905195
+*/
+
 #include "randomFile.h"
 #include <time.h>
 #include <stdio.h>
