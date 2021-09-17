@@ -13,6 +13,8 @@ int main() {
 
 	struct node* process = NULL;
 	struct node* last = NULL;
+	
+	srand(time(NULL));
 
 	numProcesses = generateRandomFile ();
 
