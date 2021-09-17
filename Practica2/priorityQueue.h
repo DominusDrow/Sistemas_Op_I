@@ -79,8 +79,14 @@ void push (struct node* process)
         }
         else
         {
+            current = head;
+            while(current->next != head)
+            {
+                current = current->next;
+            }
             process->next = head;
             head = process;
+            current->next=head;
         }
     }
     else
