@@ -4,7 +4,7 @@
  * 
  * INTEGRANTES:
  * Vásquez López Alfredo Omar    201957903
- * 
+ * Pazos Quezada Azarel          201905195
 */
 
 #include <stdio.h> 
