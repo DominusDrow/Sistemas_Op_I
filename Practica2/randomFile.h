@@ -98,13 +98,13 @@ void resultsProcess(){
 
     printf("\nProcesos terminados:      %d ",i);
     printf("\nTiempo total de espera:   %d  promedio: %d",waitTimeA,waitTimeA/i);
-    printf("\nTimpo total de ejecucion: %d  promedio: %d\n\n",endingTimeA,endingTimeA/i);
+    printf("\nTimpo total de terminacion: %d  promedio: %d\n\n",endingTimeA,endingTimeA/i);
 
     file = fopen("infoProcess.txt","ab");   
 
     fprintf(file,"\n\nProcesos terminados:      %d ",i);
     fprintf(file,"\nTiempo total de espera:   %d  promedio: %d",waitTimeA,waitTimeA/i);
-    fprintf(file,"\nTimpo total de ejecucion: %d  promedio: %d",endingTimeA,endingTimeA/i);
+    fprintf(file,"\nTimpo total de terminacion: %d  promedio: %d",endingTimeA,endingTimeA/i);
 
     fclose(file);
 }
