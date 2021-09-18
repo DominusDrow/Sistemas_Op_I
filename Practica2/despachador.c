@@ -67,7 +67,8 @@ int main() {
 			process->tWait = process->tEnding - process->tExe - process->tArrival;
 			printf ("\nPROCESO TERMINADO.\n");
 			printProcessData (process);
-			writeProcess(process);
+			writeProcess (process);
+			free (process);
 		}
 		else if (process->remainingQuantum == 0)
 		{
