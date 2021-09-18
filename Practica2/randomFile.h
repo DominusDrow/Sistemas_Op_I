@@ -22,7 +22,7 @@
  * no recibe parametros
  */
 int generateRandomFile(){
-    int processes  = rand () % 3 + 2;
+    int processes  = rand () % 499 + 2;
     int i, id, prority, tExe;
 
     FILE* file = fopen("randomFile.txt","wb");
@@ -30,7 +30,7 @@ int generateRandomFile(){
     for ( i = 0; i < processes; i++){
         id = rand () % 9000 + 1000;
         prority = rand () % 33 + 0;  
-        tExe = rand () % 15 + 1;       
+        tExe = rand () % 200 + 1;       
         fprintf(file,"%d %d %d\n",id,prority,tExe); 
     }
     fclose(file);
