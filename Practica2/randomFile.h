@@ -22,7 +22,7 @@
  * no recibe parametros
  */
 int generateRandomFile(){
-    int processes  = rand () % 499 + 2;
+    int processes  = rand () % 3 + 2;
     int i, id, prority, tExe;
 
     FILE* file = fopen("randomFile.txt","wb");
@@ -30,14 +30,14 @@ int generateRandomFile(){
     for ( i = 0; i < processes; i++){
         id = rand () % 9000 + 1000;
         prority = rand () % 33 + 0;  
-        tExe = rand () % 200 + 1;       
+        tExe = rand () % 15 + 1;       
         fprintf(file,"%d %d %d\n",id,prority,tExe); 
     }
     fclose(file);
     
     //creamos el archivo donde se almacenaran los resultados
     FILE* fileI = fopen("infoProcess.txt","wb"); 
-    fprintf(fileI," ID  P  A WAIT END");
+    fprintf(fileI," ID  P      A    WAIT   END");
     fclose(fileI);
 
     return processes;
@@ -86,12 +86,12 @@ void resultsProcess(){
     int waitTimeA=0, endingTimeA=0, i=0, id, p, a, tWait,tEnding;
     
     FILE* file = fopen("infoProcess.txt","rb");
-    fseek(file,18,SEEK_SET); //despues de los titulos
+    fseek(file,30,SEEK_SET); //despues de los titulos
 
     while (feof(file) == 0){
         fscanf(file,"\n%d %d %d %d %d",&id, &p, &a, &tWait, &tEnding);
         waitTimeA += tWait;
-        endingTimeA += tEnding;
+        endingTimeA += (tEnding-a);
         i++;
     }
     fclose(file);

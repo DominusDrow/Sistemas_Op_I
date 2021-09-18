@@ -63,9 +63,8 @@ int main() {
 		{
 			deleteFirst ();
 			numProcesses--;
-			process->tEnding = time (NULL) - process->tArrival;
-			process->tWait = process->tEnding - process->tExe;
-			process->tArrival -=time0; 
+			process->tEnding = time (NULL) ;
+			process->tWait = process->tEnding - process->tExe - process->tArrival;
 			printf ("\nPROCESO TERMINADO.\n");
 			printProcessData (process);
 			writeProcess(process);

@@ -15,7 +15,7 @@
 #include <stdlib.h>
 #include <time.h>
 
-#define QUANTUM 10
+#define QUANTUM 55
 
 //Estructura del nodo 
 struct node 
