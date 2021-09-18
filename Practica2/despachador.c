@@ -3,12 +3,14 @@
  * Round Robin con prioridades preventivo
  * 
  * INTEGRANTES:
- * Vásquez López Alfredo Omar    	201957903
- * Pazos Quezada Azarel          	201905195
- * Eusebio Aquino José Ángel 	 	201969852
- * Javier Olivares Héctor 		201938693
+ * Vásquez López Alfredo Omar    	    201957903
+ * Pazos Quezada Azarel          	    201905195
+ * Eusebio Aquino José Ángel 	 	    201969852
+ * Javier Olivares Héctor 		        201938693
  * García Espinoza Alejandro Tonatiuh 	201910235
 */
+
+/***SIMULADOR DE PLANIFICACIÓN A CORTO PLAZO***/
 
 #include "randomFile.h"
 #include <time.h>
@@ -35,24 +37,28 @@ int main() {
 	{
 		if (waitReadTime == 0 && remaining != -1)
 		{
-			lotReader (&remaining);
+			lotReader (&remaining); 
 			waitReadTime = rand () % 30 + 1;
 		}
 		last = process;
 		process = pop ();
 
-		if (last != process)
+		if (last != process && last !=NULL)
 		{
 			printf ("\n*** CAMBIO DE CONTEXTO ***\n\n");
+			sleep (1);
 		}
 
+		//aqui es donde se simula que esta en ejecucion el proceso
 		process->remainingQuantum--;
 		process->remainingTime--;
 		printf ("Ahora ejecutando el proceso: %d\n", process->id);
 		printf ("Prioridad: %d\n", process->priority);
 		printf ("Tiempo de ejecucion restante: %d\n", process->remainingTime);
-		printf ("Tiempo de quantum restante: %d\n", process->remainingQuantum);
-
+		printf ("Tiempo de quantum restante: %d\n", process->remainingQuantum);	
+		waitReadTime--;
+		sleep (1);
+		
 		if (process->remainingTime == 0)
 		{
 			deleteFirst ();
@@ -64,17 +70,12 @@ int main() {
 			printProcessData (process);
 			writeProcess(process);
 		}
-		else
+		else if (process->remainingQuantum == 0)
 		{
-			if (process->remainingQuantum == 0)
-			{
-				process->remainingQuantum = QUANTUM;
-				deleteFirst ();
-				pushLast (process);
-			}
+			process->remainingQuantum = QUANTUM;
+			deleteFirst ();
+			pushLast (process);
 		}
-		waitReadTime--;
-		sleep (1);
 	}
 	resultsProcess();
 	freeSpace ();

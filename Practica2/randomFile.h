@@ -22,7 +22,7 @@
  * no recibe parametros
  */
 int generateRandomFile(){
-    int processes  = rand () % 3 + 2;
+    int processes  = rand () % 499 + 2;
     int i, id, prority, tExe;
 
     FILE* file = fopen("randomFile.txt","wb");
@@ -30,15 +30,14 @@ int generateRandomFile(){
     for ( i = 0; i < processes; i++){
         id = rand () % 9000 + 1000;
         prority = rand () % 33 + 0;  
-        // tExe = rand () % 200 + 1;   
-        tExe = rand () % 15 + 1;   
+        tExe = rand () % 200 + 1;       
         fprintf(file,"%d %d %d\n",id,prority,tExe); 
     }
     fclose(file);
     
     //creamos el archivo donde se almacenaran los resultados
     FILE* fileI = fopen("infoProcess.txt","wb"); 
-    fprintf(fileI," ID  P  WAIT END");
+    fprintf(fileI," ID  P  A WAIT END");
     fclose(fileI);
 
     return processes;
@@ -74,7 +73,7 @@ void lotReader(int* line){
  */
 void writeProcess(struct node* process){
     FILE* file = fopen("infoProcess.txt","ab");
-   fprintf(file,"\n%d %d %d %d", process->id, process->priority, process->tWait, process->tEnding);
+    fprintf(file,"\n%d %d %d %d %d", process->id, process->priority, process->tArrival, process->tWait, process->tEnding);
     fclose(file);
 }
 
@@ -84,25 +83,27 @@ void writeProcess(struct node* process){
  * de todos los procesos, no recibe parametros.
  */
 void resultsProcess(){
-    int waitTimeA=0, endingTimeA=0, i=0, id, p, tWait,tEnding;
+    int waitTimeA=0, endingTimeA=0, i=0, id, p, a, tWait,tEnding;
     
     FILE* file = fopen("infoProcess.txt","rb");
-    fseek(file,17,SEEK_SET);
+    fseek(file,18,SEEK_SET); //despues de los titulos
 
     while (feof(file) == 0){
-        fscanf(file,"\n%d %d %d %d",&id, &p, &tWait, &tEnding);
+        fscanf(file,"\n%d %d %d %d %d",&id, &p, &a, &tWait, &tEnding);
         waitTimeA += tWait;
         endingTimeA += tEnding;
         i++;
     }
     fclose(file);
 
-    printf("\nTiempo total de espera:   %d  promedio: %d",waitTimeA,waitTimeA);
-    printf("\nTimpo total de ejecucion: %d  promedio: %d\n\n",endingTimeA,endingTimeA);
+    printf("\nProcesos terminados:      %d ",i);
+    printf("\nTiempo total de espera:   %d  promedio: %d",waitTimeA,waitTimeA/i);
+    printf("\nTimpo total de ejecucion: %d  promedio: %d\n\n",endingTimeA,endingTimeA/i);
 
-    file = fopen("infoProcess.txt","ab");
+    file = fopen("infoProcess.txt","ab");   
 
-    fprintf(file,"\n\nTiempo total de espera:   %d  promedio: %d",waitTimeA,waitTimeA/i);
+    fprintf(file,"\n\nProcesos terminados:      %d ",i);
+    fprintf(file,"\nTiempo total de espera:   %d  promedio: %d",waitTimeA,waitTimeA/i);
     fprintf(file,"\nTimpo total de ejecucion: %d  promedio: %d",endingTimeA,endingTimeA/i);
 
     fclose(file);
