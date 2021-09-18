@@ -60,6 +60,7 @@ int main() {
 			process->tWait = process->tEnding - process->tExe - process->tArrival;
 			printf ("Proceso %d terminado.\n", process->id);
 			printProcessData (process);
+			writeProcess(process);
 		}
 		else
 		{

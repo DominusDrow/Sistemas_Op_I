@@ -3,12 +3,14 @@
  * Round Robin con prioridades preventivo
  * 
  * INTEGRANTES:
- * Vásquez López Alfredo Omar    	201957903
- * Pazos Quezada Azarel          	201905195
- * Eusebio Aquino José Ángel 	 	201969852
- * Javier Olivares Héctor 		201938693
+ * Vásquez López Alfredo Omar    	    201957903
+ * Pazos Quezada Azarel          	    201905195
+ * Eusebio Aquino José Ángel 	 	    201969852
+ * Javier Olivares Héctor 		        201938693
  * García Espinoza Alejandro Tonatiuh 	201910235
 */
+
+/***MANEJO DE ARCHIVOS (GENERARDOR Y LECTURA DE PROCESOS)***/
 
 #include <stdio.h> 
 #include <stdlib.h>
@@ -16,10 +18,11 @@
 
 /**
  * Funcion que crea el archivo "randomFile.txt" con datos 
- * aleatorios, no recibe parametros.
+ * aleatorios y devuelve el numero de procesos creados,
+ * no recibe parametros
  */
 int generateRandomFile(){
-    int processes  = rand () % 499 + 2;
+    int processes  = rand () % 3 + 2;
     int i, id, prority, tExe;
 
     FILE* file = fopen("randomFile.txt","wb");
@@ -27,14 +30,17 @@ int generateRandomFile(){
     for ( i = 0; i < processes; i++){
         id = rand () % 9000 + 1000;
         prority = rand () % 33 + 0;  
-        tExe = rand () % 200 + 1;
-        if(i == processes-1)
-            fprintf(file,"%d %d %d",id,prority,tExe); //para que no deje un espacio en blanco al final
-        else 
-            fprintf(file,"%d %d %d\n",id,prority,tExe); 
+        // tExe = rand () % 200 + 1;   
+        tExe = rand () % 15 + 1;   
+        fprintf(file,"%d %d %d\n",id,prority,tExe); 
     }
-
     fclose(file);
+    
+    //creamos el archivo donde se almacenaran los resultados
+    FILE* fileI = fopen("infoProcess.txt","wb"); 
+    fprintf(fileI," ID  P  WAIT END");
+    fclose(fileI);
+
     return processes;
 }
 
@@ -53,7 +59,7 @@ void lotReader(int* line){
     fseek(file,*line,SEEK_SET);
 
     while (i++ < n && feof(file) == 0){
-        fscanf(file,"%d %d %d", &id, &priority, &tExe);
+        fscanf(file,"%d %d %d\n", &id, &priority, &tExe);
         create (id, priority, tExe);
     }
     
@@ -61,3 +67,41 @@ void lotReader(int* line){
     fclose(file);
 }
 
+/**
+ * Funcion que crea el archivo "infoProcess.txt" y va
+ * escribiendo los procesos en orden de finalizacion,
+ * no recibe parametros.
+ */
+void writeProcess(struct node* process){
+    FILE* file = fopen("infoProcess.txt","ab");
+   fprintf(file,"\n%d %d %d %d", process->id, process->priority, process->tWait, process->tEnding);
+    fclose(file);
+}
+
+/**
+ * Funcion que lee el archivo "infoProcess.txt" para
+ * calcular el timepo de espera y terminacion promedio
+ * de todos los procesos, no recibe parametros.
+ */
+void resultsProcess(){
+    int waitTimeA=0, endingTimeA=0, i=0, id, p, tWait,tEnding;
+    
+    FILE* file = fopen("infoProcess.txt","rb");
+    while (feof(file) == 0){
+        fscanf(file,"\n%d %d %d %d",&id, &p, &tWait, &tEnding);
+        waitTimeA += tWait;
+        endingTimeA += tEnding;
+        i++;
+    }
+    fclose(file);
+
+    printf("\nTiempo total de espera:   %d  promedio: %d",waitTimeA,waitTimeA/i);
+    printf("\nTimpo total de ejecucion: %d  promedio: %d\n\n",endingTimeA,endingTimeA/i);
+
+    file = fopen("infoProcess.txt","ab");
+
+    fprintf(file,"\n\nTiempo total de espera:   %d  promedio: %d",waitTimeA,waitTimeA/i);
+    fprintf(file,"\nTimpo total de ejecucion: %d  promedio: %d",endingTimeA,endingTimeA/i);
+
+    fclose(file);
+}
