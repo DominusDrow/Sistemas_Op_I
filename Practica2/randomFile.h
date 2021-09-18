@@ -87,6 +87,8 @@ void resultsProcess(){
     int waitTimeA=0, endingTimeA=0, i=0, id, p, tWait,tEnding;
     
     FILE* file = fopen("infoProcess.txt","rb");
+    fseek(file,17,SEEK_SET);
+
     while (feof(file) == 0){
         fscanf(file,"\n%d %d %d %d",&id, &p, &tWait, &tEnding);
         waitTimeA += tWait;
@@ -95,8 +97,8 @@ void resultsProcess(){
     }
     fclose(file);
 
-    printf("\nTiempo total de espera:   %d  promedio: %d",waitTimeA,waitTimeA/i);
-    printf("\nTimpo total de ejecucion: %d  promedio: %d\n\n",endingTimeA,endingTimeA/i);
+    printf("\nTiempo total de espera:   %d  promedio: %d",waitTimeA,waitTimeA);
+    printf("\nTimpo total de ejecucion: %d  promedio: %d\n\n",endingTimeA,endingTimeA);
 
     file = fopen("infoProcess.txt","ab");
 

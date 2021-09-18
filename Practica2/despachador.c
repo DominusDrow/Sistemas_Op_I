@@ -19,6 +19,7 @@
 void printProcessData (struct node* process);
 
 int main() {
+	int time0 = time(NULL);
 	int waitReadTime = 0;
 	int remaining = 0;
 	int numProcesses;
@@ -42,11 +43,11 @@ int main() {
 
 		if (last != process)
 		{
-			printf ("Cambio de contexto.\n");
+			printf ("\n*** CAMBIO DE CONTEXTO ***\n\n");
 		}
 
-		process->remainingQuantum = process->remainingQuantum - 1;
-		process->remainingTime = process->remainingTime - 1;
+		process->remainingQuantum--;
+		process->remainingTime--;
 		printf ("Ahora ejecutando el proceso: %d\n", process->id);
 		printf ("Prioridad: %d\n", process->priority);
 		printf ("Tiempo de ejecucion restante: %d\n", process->remainingTime);
@@ -56,9 +57,10 @@ int main() {
 		{
 			deleteFirst ();
 			numProcesses--;
-			process->tEnding = time (NULL);
-			process->tWait = process->tEnding - process->tExe - process->tArrival;
-			printf ("Proceso %d terminado.\n", process->id);
+			process->tEnding = time (NULL) - process->tArrival;
+			process->tWait = process->tEnding - process->tExe;
+			process->tArrival -=time0; 
+			printf ("\nPROCESO TERMINADO.\n");
 			printProcessData (process);
 			writeProcess(process);
 		}
@@ -74,13 +76,13 @@ int main() {
 		waitReadTime--;
 		sleep (1);
 	}
-
+	resultsProcess();
 	freeSpace ();
 }
 
 void printProcessData (struct node* process)
 {
-	printf ("pid: %d\n", process->id);
+	printf ("id: %d\n", process->id);
 	printf ("prioridad: %d\n", process->priority);
 	printf ("tiempo de ejecucion: %d\n", process->tExe);
 	printf ("tiempo de llegada: %d\n", process->tArrival);
