@@ -21,7 +21,7 @@ int Fibonacci(int n){
 }
 
 int main(int argc, char *argv[]){
-  int cont, i;
+  	int cont, i;
 	cont = atoi(argv[1]);
 
 	// Funcion Fibonacci
