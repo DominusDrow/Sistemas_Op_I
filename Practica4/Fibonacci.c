@@ -2,10 +2,10 @@
  * PRACTICA 4: Simulador de shell con fork() y exec()
  * 
  * INTEGRANTES:
- * Eusebio Aquino Jose Angel 	 	    				201969852
- * Vasquez Lopez Alfredo Omar    	    			201957903
- * Pazos Quezada Azarel          	    			201905195
- * Javier Olivares Hector 		    					201938693
+ * Eusebio Aquino Jose Angel 	 	    201969852
+ * Vasquez Lopez Alfredo Omar    	    201957903
+ * Pazos Quezada Azarel          	    201905195
+ * Javier Olivares Hector 		    201938693
  * Garcia Espinoza Alejandro Tonatiuh 	    201910235
 */
 
