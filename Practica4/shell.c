@@ -58,8 +58,12 @@ int main( ){
 				if(WIFEXITED(status)){
 					if(WEXITSTATUS(status) == 7)
 						printf("**El proceso %d  termino debido que hay una division entre 0**\n",pid);
-					else
-						printf("**El proceso %d  termino normalmente**\n",pid);
+					else{
+						if(WEXITSTATUS(status) == 6)
+							printf("**El proceso %d  termino debido que los parametros fueron incorrectos o incompletos**\n",pid);
+						else
+							printf("**El proceso %d  termino normalmente**\n",pid);
+					}
 				}
 				if(WIFSIGNALED(status))
 					printf("**El proceso %d terminó debido a que recibió la señal %d**\n",pid,WTERMSIG(status));
