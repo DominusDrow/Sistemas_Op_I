@@ -30,7 +30,7 @@ struct process newProcess(int id, int priority, int tExe){
 	struct process p;
 	p.id=id;
 	p.priority=priority;
-	p.tExe=tExe*1000;
+	p.tExe=tExe;
 	p.tArrival=0;
 	p.tWait=0;
 	p.tEnding=0;
