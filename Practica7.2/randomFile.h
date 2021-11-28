@@ -44,40 +44,6 @@ int generateRandomFile(){
 }
 
 /**
- * Funcion que lee n siguientes lineas del archivo "randomFile.txt"
- * cada vez que es invocada hasta que llegue al final del archivo 
- * 
- * Parametros:
- * int* linea en que se quedo leyendo
- */
-void lotReader(int* line){
-    int n = rand () % 50 + 1;
-    int i=0, id, priority, tExe;
-
-    FILE* file = fopen("randomFile.txt","rb");
-    fseek(file,*line,SEEK_SET);
-
-    while (i++ < n && feof(file) == 0){
-        fscanf(file,"%d %d %d\n", &id, &priority, &tExe);
-        create (id, priority, tExe);
-    }
-    
-    *line = (feof(file)!=0) ?-1 :ftell(file);
-    fclose(file);
-}
-
-/**
- * Funcion que crea el archivo "infoProcess.txt" y va
- * escribiendo los procesos en orden de finalizacion,
- * no recibe parametros.
- */
-void writeProcess(struct node* process){
-    FILE* file = fopen("infoProcess.txt","ab");
-    fprintf(file,"\n%d %d %d %d %d", process->id, process->priority, process->tArrival, process->tWait, process->tEnding);
-    fclose(file);
-}
-
-/**
  * Funcion que lee el archivo "infoProcess.txt" para
  * calcular el timepo de espera y terminacion promedio
  * de todos los procesos, no recibe parametros.

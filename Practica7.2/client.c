@@ -3,6 +3,7 @@
 #include <netinet/in.h>
 #include <strings.h>
 #include <unistd.h>
+#include <time.h>
 #include <stdio.h>
 
 #include "randomFile.h"
@@ -22,6 +23,7 @@ int main ()
     int nProccesToRead;
     int i = 0, processId, processPriority, processTExe;
     FILE* file;
+    struct process process;
 
     srand (time (NULL));
 
@@ -51,11 +53,12 @@ int main ()
             {
                 
                 fscanf (file, "%d %d %d\n", &processId, &processPriority, &processTExe);
-                
-                write (sockdesc, new (processId, processPriority, processTExe), sizeof (struct node));
+                process = newProcess (processId, processPriority, processTExe);
+                printf ("Leído el proceso con id: %d\n", process.id);
+                write (sockdesc, &process, sizeof (struct process));
                 
                 numProcesses--;
-                printf ("%d\n", numProcesses);
+                printf ("Faltan %d procesos por leer.\n", numProcesses);
             }
             
             remaining = (feof (file) != 0) ? -1 : ftell (file);

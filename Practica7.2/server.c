@@ -4,14 +4,19 @@
 #include <netinet/in.h>
 #include <signal.h>
 #include <stdio.h>
+#include <stdlib.h>
+#include <time.h>
+#include <wait.h>
+#include <sys/ipc.h>
+#include <sys/shm.h>
 #include <unistd.h>
 
 #include "priorityQueue.h"
+#include "upDown.h"
 
 #define PUERTO 55556
 
-void server (int cs);
-void printProcessData (struct node* process);
+void server (int semid, struct queue *queue, int cs);
 
 int main ()
 {
@@ -19,46 +24,125 @@ int main ()
     int cs; // El descriptor del socket que regresa la función accept
     struct sockaddr_in local;
 
-    sockdesc = socket (AF_INET, SOCK_STREAM, 0);
+    int shmid, semid, pid, i;
+    struct process process, last;
+    struct queue *queue;
 
-    local.sin_family = AF_INET;
-    local.sin_port = htons (PUERTO);
-    local.sin_addr.s_addr = INADDR_ANY;
+    shmid = shmget (1, sizeof (struct queue), IPC_CREAT | 0600);
 
-    bind (sockdesc, (struct sockaddr *) &local, sizeof (local));
-    
-    listen (sockdesc, 0);
-
-    while (1)
+    if ((queue = (struct queue*) shmat (shmid, 0, 0)) == (struct queue*) -1)
     {
-        cs = accept (sockdesc, (struct sockaddr *) 0, (int *) 0);
-        server (cs);
-        close (cs);
+        perror ("shmat failed\n");
+        exit (1);
+    }
+
+    semid = semget (1, 2, IPC_CREAT | 0600);
+    up (semid, 1);
+
+    queue->head = 0;
+    queue->end = 0;
+    queue->lenght = 0;
+
+    pid = fork ();
+
+    switch (pid)
+    {
+    case -1:
+        perror ("error al crear hijo\n");
+        exit (2);
+        break;
+    case 0:
+        process = newProcess (-1, -1, -1);
+
+        while (1)
+        {
+            down (semid, 0); // si hay procesos para despachar
+            last = process;
+            down (semid, 1); // entra a la región crítica
+            process = pop (queue);
+            up (semid, 1); 
+
+            if (process.id == -1)
+            {
+                continue;
+            }
+
+            if (process.id != last.id)
+            {
+                printf ("\n*** CAMBIO DE CONTEXTO ***\n\n");
+                sleep (1);
+            }
+
+            process.remainingQuantum--;
+            process.remainingTime--;
+            printf ("Ahora ejecutando el proceso: %d\n", process.id);
+            printf ("Prioridad: %d\n", process.priority);
+            printf ("Tiempo de ejecucion restante: %d\n", process.remainingTime);
+            printf ("Tiempo de quantum restante: %d\n", process.remainingQuantum);
+            sleep (1);
+
+            if (process.remainingTime == 0)
+            {
+                process.tEnding = time (NULL) ;
+                process.tWait = process.tEnding - process.tExe - process.tArrival;
+                printf ("\nPROCESO TERMINADO.\n");
+                printProcessData(process);
+                //writeProcess(process);
+            }
+            else if (process.remainingQuantum == 0)
+            {
+                process.remainingQuantum = QUANTUM;
+                down(semid, 1);
+                pushLast(queue,process);
+                up(semid, 1);
+                up(semid,0);
+            }
+            else
+            {
+                down(semid, 1);
+                pushFirst(queue, process);
+                up(semid, 1);
+                up(semid,0);
+            }
+        }
+        exit (0);
+        break;
+    default:
+        sockdesc = socket (AF_INET, SOCK_STREAM, 0);
+
+        local.sin_family = AF_INET;
+        local.sin_port = htons (PUERTO);
+        local.sin_addr.s_addr = INADDR_ANY;
+
+        bind (sockdesc, (struct sockaddr *) &local, sizeof (local));
+        
+        listen (sockdesc, 0);
+
+        while (1)
+        {
+            cs = accept (sockdesc, (struct sockaddr *) 0, (int *) 0);
+            server (semid, queue, cs);
+            close (cs);
+        }
+        break;
     }
 }
 
-void server (int cs)
+void server (int semid, struct queue *queue, int cs)
 {
-    struct node process;
+    struct process process;
     int t;
     while (1)
     {
-        t = read (cs, &process, sizeof (struct node));
-
-        if (t == sizeof (struct node))
+        t = read (cs, &process, sizeof (struct process));
+        if (t == sizeof (struct process))
         { 
             // Push process node here
-            printProcessData (&process); // just for testing
+            down (semid, 1);
+            push (queue, process);
+            //printf ("%d\n", process.id);
+            up (semid, 1);
+            up (semid, 0);
         }
     }
-}
-
-void printProcessData (struct node* process)
-{
-	printf ("id: %d\n", process->id);
-	printf ("prioridad: %d\n", process->priority);
-	printf ("tiempo de ejecucion: %d\n", process->tExe);
-	printf ("tiempo de llegada: %d\n", process->tArrival);
-	printf ("tiempo de espera: %d\n", process->tWait);
-	printf ("tiempo de terminacion: %d\n", process->tEnding);
 }
