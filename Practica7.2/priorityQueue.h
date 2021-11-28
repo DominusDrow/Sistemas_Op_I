@@ -31,7 +31,7 @@ struct queue
  */
 
 void increase(int *i){
-    if((*i)==ARRAY_LENGTH-2)
+    if((*i)==ARRAY_LENGTH-1)
         *i=0;
     else
         (*i)++;
@@ -45,7 +45,7 @@ void increase(int *i){
 
 void decrease(int *i){
     if((*i)==0)
-        *i=ARRAY_LENGTH-2;
+        *i=ARRAY_LENGTH-1;
     else
         (*i)--;
 }
