@@ -86,36 +86,7 @@ int main(){
 			exit(0);
 	}
 	
-	printf("antes de la region\n");
-	down(semid, 1);
-	printf("adentro de la region\n");
-	process=newProcess(1, 3, 5);
-	push(queue, process);
-	up(semid,0);
-
-	process=newProcess(2, 2, 6);
-	push(queue, process);
-	up(semid,0);
-
-	process=newProcess(3, 1, 7);
-	push(queue, process);
-	up(semid,0);
-
-	process=newProcess(4, 4, 3);
-	push(queue, process);
-	up(semid,0);
-
-	up(semid, 1);
-	printf("afuera de la region\n");
-
-	for(i=0; i<queue->lenght; i++)
-		printProcessData(queue->processesArray[i]);
-
-	wait((int *)0);
-
-	semctl(semid, 0, IPC_RMID);
-	shmdt(queue);
-	shmctl(shmid, IPC_RMID, NULL);
+	//Esta parte lee los procesos del socket
 
 	exit(0);
 }
