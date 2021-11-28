@@ -40,15 +40,26 @@ int main ()
     struct process process, last;
     struct queue *queue;
 
-    shmid = shmget (1, sizeof (struct queue), IPC_CREAT | 0600);
-
+    shmid = shmget (1, sizeof (struct queue), IPC_CREAT | IPC_EXCL |0600);
+    if(shmid==-1)
+    {
+        perror ("shmget failed\n");
+        exit (1);
+    }
+    
     if ((queue = (struct queue*) shmat (shmid, 0, 0)) == (struct queue*) -1)
     {
         perror ("shmat failed\n");
         exit (1);
     }
 
-    semid = semget (1, 2, IPC_CREAT | 0600);
+    semid = semget (1, 2, IPC_CREAT | IPC_EXCL |0600);
+    if(semid==-1)
+    {
+        perror ("semget failed\n");
+        exit (1);
+    }
+    
     up (semid, 1);
 
     queue->head = 0;
