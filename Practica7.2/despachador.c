@@ -1,92 +1,121 @@
-/**
- * PRACTICA 2: Simulador de algoritmo de planificación 
- * Round Robin con prioridades preventivo
- * 
- * INTEGRANTES:
- * Vásquez López Alfredo Omar    	    201957903
- * Pazos Quezada Azarel          	    201905195
- * Eusebio Aquino José Ángel 	 	    201969852
- * Javier Olivares Héctor 		        201938693
- * García Espinoza Alejandro Tonatiuh 	201910235
-*/
-
-/***SIMULADOR DE PLANIFICACIÓN A CORTO PLAZO***/
-
-#include "randomFile.h"
-#include <time.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <time.h>
 #include <unistd.h>
+#include <wait.h>
+#include <sys/ipc.h>
+#include <sys/shm.h>
 
-void printProcessData (struct node* process);
+#include "priorityQueue.h"
+#include "upDown.h"
 
-int main() {
-	int time0 = time(NULL);
-	int waitReadTime = 0;
-	int remaining = 0;
-	int numProcesses;
+int main(){
+	int shmid, semid, pid, i;
+	struct process process, last;
+	struct queue *queue;
 
-	struct node* process = NULL;
-	struct node* last = NULL;
-	
-	srand(time(NULL));
-
-	numProcesses = generateRandomFile ();
-
-	while (numProcesses > 0)
-	{
-		if (waitReadTime == 0 && remaining != -1)
-		{
-			lotReader (&remaining); 
-			waitReadTime = rand () % 30 + 1;
-		}
-		last = process;
-		process = pop ();
-
-		if (last != process && last !=NULL)
-		{
-			printf ("\n*** CAMBIO DE CONTEXTO ***\n\n");
-			sleep (1);
-		}
-
-		//aqui es donde se simula que esta en ejecucion el proceso
-		process->remainingQuantum--;
-		process->remainingTime--;
-		printf ("Ahora ejecutando el proceso: %d\n", process->id);
-		printf ("Prioridad: %d\n", process->priority);
-		printf ("Tiempo de ejecucion restante: %d\n", process->remainingTime);
-		printf ("Tiempo de quantum restante: %d\n", process->remainingQuantum);	
-		waitReadTime--;
-		sleep (1);
-		
-		if (process->remainingTime == 0)
-		{
-			deleteFirst ();
-			numProcesses--;
-			process->tEnding = time (NULL) ;
-			process->tWait = process->tEnding - process->tExe - process->tArrival;
-			printf ("\nPROCESO TERMINADO.\n");
-			printProcessData (process);
-			writeProcess (process);
-			free (process);
-		}
-		else if (process->remainingQuantum == 0)
-		{
-			process->remainingQuantum = QUANTUM;
-			deleteFirst ();
-			pushLast (process);
-		}
+	shmid=shmget(1, sizeof(struct queue), IPC_CREAT|0600);
+	if((queue=(struct queue*)shmat(shmid,0,0))==(struct queue *)-1){
+		perror("shmat failed\n");
+		exit(1);
 	}
-	resultsProcess();
-	freeSpace ();
-}
 
-void printProcessData (struct node* process)
-{
-	printf ("id: %d\n", process->id);
-	printf ("prioridad: %d\n", process->priority);
-	printf ("tiempo de ejecucion: %d\n", process->tExe);
-	printf ("tiempo de llegada: %d\n", process->tArrival);
-	printf ("tiempo de espera: %d\n", process->tWait);
-	printf ("tiempo de terminacion: %d\n", process->tEnding);
+	semid=semget(1, 2, IPC_CREAT|0600);
+	up(semid, 1);
+
+	queue->head=0;
+	queue->end=0;
+	queue->lenght=0;
+
+	pid=fork();
+	switch(pid){
+		case -1:
+			perror("error al crear hijo\n");
+			exit(2);
+		case 0:
+			
+			process=newProcess(-1,-1,-1);
+
+			while(1){
+				down(semid, 0); //si hay procesos para despachar
+				last=process;
+				down(semid, 1); //entra a la región crítica
+				process=pop(queue);
+				up(semid, 1); // sale de la región crítica
+				
+				if(process.id!=last.id){
+					printf ("\n*** CAMBIO DE CONTEXTO ***\n\n");
+					sleep (1);
+				}
+				
+
+				process.remainingQuantum--;
+				process.remainingTime--;
+				printf ("Ahora ejecutando el proceso: %d\n", process.id);
+				printf ("Prioridad: %d\n", process.priority);
+				printf ("Tiempo de ejecucion restante: %d\n", process.remainingTime);
+				printf ("Tiempo de quantum restante: %d\n", process.remainingQuantum);
+				sleep (1);
+
+				if (process.remainingTime == 0)
+				{
+					process.tEnding = time (NULL) ;
+					process.tWait = process.tEnding - process.tExe - process.tArrival;
+					printf ("\nPROCESO TERMINADO.\n");
+					printProcessData(process);
+					//writeProcess(process);
+				}
+				else if (process.remainingQuantum == 0)
+				{
+					process.remainingQuantum = QUANTUM;
+					down(semid, 1);
+					pushLast(queue,process);
+					up(semid, 1);
+					up(semid,0);
+				}
+				else
+				{
+					down(semid, 1);
+					pushFirst(queue, process);
+					up(semid, 1);
+					up(semid,0);
+				}
+				
+			}
+
+			exit(0);
+	}
+	
+	printf("antes de la region\n");
+	down(semid, 1);
+	printf("adentro de la region\n");
+	process=newProcess(1, 3, 5);
+	push(queue, process);
+	up(semid,0);
+
+	process=newProcess(2, 2, 6);
+	push(queue, process);
+	up(semid,0);
+
+	process=newProcess(3, 1, 7);
+	push(queue, process);
+	up(semid,0);
+
+	process=newProcess(4, 4, 3);
+	push(queue, process);
+	up(semid,0);
+
+	up(semid, 1);
+	printf("afuera de la region\n");
+
+	for(i=0; i<queue->lenght; i++)
+		printProcessData(queue->processesArray[i]);
+
+	wait((int *)0);
+
+	semctl(semid, 0, IPC_RMID);
+	shmdt(queue);
+	shmctl(shmid, IPC_RMID, NULL);
+
+	exit(0);
 }
