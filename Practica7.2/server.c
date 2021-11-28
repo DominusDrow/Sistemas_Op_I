@@ -151,7 +151,7 @@ void server (int semid, struct queue *queue, int cs)
         { 
             // Push process node here
             down (semid, 1);
-            proccess.tArrival = time (NULL);
+            process.tArrival = time (NULL);
             push (queue, process);
             //printf ("%d\n", process.id);
             up (semid, 1);
