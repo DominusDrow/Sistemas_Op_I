@@ -13,178 +13,121 @@
 /***SIMULADOR DE PLANIFICACIÓN A LARGO PLAZO***/
 
 #include <stdlib.h>
-#include <time.h>
-
-#define QUANTUM 55
+#include "process.h"
 
 //Estructura del nodo 
-struct node 
+struct queue
 {
-    int id;
-    int priority;
-    int tExe;
-    int tArrival;
-    int tWait;
-    int tEnding;    
-    int remainingTime;
-    int remainingQuantum;
-    struct node* next;
+    struct process processesArray[ARRAY_LENGTH];
+    int head;
+    int end;
+    int lenght;
 };
 
-struct node* head = NULL;
-struct node* current = NULL;
+void increase(int *i){
+    if((*i)==ARRAY_LENGTH-1)
+        *i=0;
+     (*i)++;
+}
+
+int decrease(int i){
+    if(i==0)
+        return ARRAY_LENGTH-1;
+    return --i;
+}
+
+int isEmpty(struct queue processesQueue){
+    return processesQueue.head==processesQueue.end;
+}
+
+int isFull(struct queue processesQueue){
+    if(processesQueue.end==ARRAY_LENGTH-1 && processesQueue.head==0)
+        return 1;
+    else
+        return processesQueue.end==processesQueue.head-1;
+}
+
+void moveSince(struct queue *processesQueue, int i){
+    int j=processesQueue->end, k;
+
+    while(i!=j){
+        k=decrease(j);
+        processesQueue->processesArray[j]=processesQueue->processesArray[k];
+        j=k;
+    }
+    increase(&processesQueue->end);
+}
 
 /**
- * Funcion que recibe  un nodo el cual lo ordena dentro de
- * la lista ligada sugun su prioridad en forma acendente.
+ * Funcion que recibe  un proceso el cual lo ordena dentro de
+ * la cola sugun su prioridad en forma acendente.
  */
-void push (struct node* process)
-{
-    if (head == NULL)
-    {
-        head = process;
-        process->next = head;
-    }
-    else if (process->priority < head->priority)
-    {
-        if (head->next = head)
-        {
-            current = head;
-            process->next = head;
-            head = process;
-            current->next = head;
-        }
-        else
-        {
-            current = head;
-            while(current->next != head)
-            {
-                current = current->next;
-            }
-            process->next = head;
-            head = process;
-            current->next=head;
-        }
-    }
-    else
-    {
-        struct node* current = head;
 
-        while (process->priority > current->priority && current->next != head)
-        {
-            current = current->next;
-        }
+int push(struct queue *processesQueue, struct process p){
+    if(isEmpty(*processesQueue)){
+        processesQueue->processesArray[processesQueue->head]=p;
+        increase(&processesQueue->end);
+        processesQueue->lenght++;
+        return 1;
+    }else if(!isFull(*processesQueue)){
+        int i=processesQueue->head, flg=0;
         
-        process->next = current->next;
-        current->next = process;
-    }
-}
-
-void pushLast (struct node* process) {
-    current = head;
-
-    if (head == NULL)
-    {
-        head = process;
-    }
-    else
-    {
-        while (current->next != head)
-        {
-            current = current->next;
+        while(i!=processesQueue->end){
+            if(p.priority<processesQueue->processesArray[i].priority){
+                moveSince(processesQueue, i);
+                processesQueue->processesArray[i]=p;
+                flg=1;
+                break;
+            }
+            i++;
         }
-        current->next = process;
-        process->next = head;
+
+        if(flg==0){
+            processesQueue->processesArray[processesQueue->end]=p;
+            increase(&processesQueue->end);
+        }
+        //printProcessData(p);
+        processesQueue->lenght++;
+        return 1;  
     }
+    return 0;
+}
+
+int pushFirst(struct queue *processesQueue, struct process p){
+    if(!isFull(*processesQueue)){
+        processesQueue->head=decrease(processesQueue->head);
+        processesQueue->processesArray[processesQueue->head]=p;
+        processesQueue->lenght++;
+        return 1;
+    }
+    return 0;
+}
+
+int pushLast(struct queue *processesQueue, struct process p){
+    if(!isFull(*processesQueue)){
+        processesQueue->processesArray[processesQueue->end]=p;
+        increase(&processesQueue->end);
+        processesQueue->lenght++;
+        return 1;
+    }
+    return 0;
 }
 
 /**
- * Funcion que crea un nuevo nodo y lo retorna
- * en donde los primeros tres parametros (identificar, 
- * prioridad y tiempo de ejecucion) se igualan a los 
- * valores pasados por parametro.
- * 
- * Parametros:
- * int identificador, prioridad, tiempo de ejecucion
- */
-void create(int id,int priority, int tExe){
-    struct node* created = malloc(sizeof(struct node));
-    created->id = id;
-    created->priority = priority;
-    created->tExe = tExe;
-    created->next = NULL;
-    created->remainingTime = tExe;
-    created->remainingQuantum = QUANTUM;
-    created->tArrival = time (NULL);
-    push (created);
-}
-
-struct node* new (int id, int priority, int tExe)
-{
-    struct node* created = malloc (sizeof (struct node));
-    created->id = id;
-    created->priority = priority;
-    created->tExe = tExe;
-    created->next = NULL;
-    created->remainingTime = tExe;
-    created->remainingQuantum = QUANTUM;
-    created->tArrival = time (NULL);
-    return created;
-}
-
-/**
- * Funcion que devuelve el nodo raiz que es el que
+ * Funcion que devuelve el primer proceso en la cola que es el que
  * contiene el menor valor numerico en su campo "prioridad"
  * no recibe parametros.
  */
-struct node* pop()
-{
-    return head;
-}
-
-//delete first item
-struct node * deleteFirst() {
-
-   //save reference to first link
-   struct node *tempLink = head;
-	
-   if(head->next == head) {  
-      head = NULL;
-      return tempLink;
-   }     
-
-    current = head;
-    while (current->next != head)
-    {
-        current = current->next;
-    }
-    current->next = head->next;
-   //mark next to first link as first 
-   head = head->next;
-	
-   //return the deleted link
-   return tempLink;
-}
 
 
-/**
- * Funcion que libera la memoria utilizada por la lista ligada 
- * creada en la ejecucion del programa una vez que este halla 
- * finalizado.
- */
-void freeSpace()
-{
-   if (head != NULL)
-   {
-        struct node *delete;
-        current = head->next;
+struct process pop(struct queue *processesQueue){
 
-        while (current != head)
-        {
-            delete = current;
-            current = current->next;
-            free (delete);
-        }
-        free (head);
-    }
+    if(isEmpty(*processesQueue))
+        return newProcess(-1,-1,-1);
+    
+    struct process aux;
+    aux=processesQueue->processesArray[processesQueue->head];
+    increase(&processesQueue->head);
+    processesQueue->lenght--;
+    return aux;
 }
